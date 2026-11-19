@@ -424,4 +424,9 @@ document.getElementById('pesan').value = '';
     document.getElementById('berhasilPesan').style.display = 'none';
   }, 5000);
 }
+        function tampilkanHasil() {
+  let semuaData = JSON.parse(localStorage.getItem('evaluasiAnonim')) || [];
+  document.querySelector('.total-nilai').textContent = semuaData.length;
+}
+tampilkanHasil();
 </script>
