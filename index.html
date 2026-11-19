@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Evaluasi Dosen Anonim</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #6366F1 0%, #8B5CF6 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 680px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+            padding-top: 20px;
+        }
+
+        header h1 {
+            font-size: 1.7rem;
+            margin-bottom: 8px;
+        }
+
+        header p {
+            opacity: 0.9;
+            font-size: 0.95rem;
+        }
+
+        .tabs {
+            display: flex;
+            background: white;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+
+        .tab {
+            flex: 1;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            font-weight: 600;
+            color: #6B7280;
+            transition: all 0.3s ease;
+        }
+
+        .tab.active {
+            background: #6366F1;
+            color: white;
+        }
+
+        .card {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+
+        .info-box {
+            background: #E0E7FF;
+            border-left: 4px solid #6366F1;
+            padding: 14px;
+            border-radius: 8px;
+            margin-bottom: 24px;
+            font-size: 0.9rem;
+            color: #3730A3;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #1F2937;
+            font-size: 0.95rem;
+        }
+
+        select, textarea {
+            width: 100%;
+            padding: 12px 14px;
+            border: 2px solid #E5E7EB;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.2s;
+        }
+
+        select:focus, textarea:focus {
+            outline: none;
+            border-color: #6366F1;
+        }
+
+        textarea {
+            min-height: 140px;
+            resize: vertical;
+        }
+
+        button {
+            background: linear-gradient(135deg, #6366F1 0%, #7C3AED 100%);
+            color: white;
+            border: none;
+            padding: 14px 24px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(99, 102, 241, 0.35);
+        }
+
+        .success-msg {
+            background: #D1FAE5;
+            color: #065F46;
+            padding: 14px;
+            border-radius: 8px;
+            margin-top: 16px;
+            display: none;
+            text-align: center;
+            font-weight: 500;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .feedback-item {
+            border-left: 4px solid #6366F1;
+            padding: 18px;
+            margin-bottom: 16px;
+            background: #F9FAFB;
+            border-radius: 0 10px 10px 0;
+            transition: background 0.2s;
+        }
+
+        .feedback-item:hover {
+            background: #F3F4F6;
+        }
+
+        .feedback-item .category {
+            display: inline-block;
+            background: #E0E7FF;
+            color: #4338CA;
+            font-size: 0.78rem;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .feedback-item .matkul {
+            font-weight: 600;
+            color: #1F2937;
+            margin-bottom: 4px;
+        }
+
+        .feedback-item .dosen {
+            font-size: 0.88rem;
+            color: #6B7280;
+            margin-bottom: 10px;
+        }
+
+        .feedback-item .pesan {
+            color: #374151;
+            line-height: 1.7;
+        }
+
+        .feedback-item .waktu {
+            font-size: 0.78rem;
+            color: #9CA3AF;
+            margin-top: 10px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 50px 20px;
+            color: #9CA3AF;
+        }
+
+        .empty-state svg {
+            width: 60px;
+            height: 60px;
+            margin-bottom: 16px;
+            opacity: 0.4;
+        }
+
+        .filter-bar {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            background: #F3F4F6;
+            color: #4B5563;
+            border: none;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            width: auto;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .filter-btn:hover, .filter-btn.active {
+            background: #6366F1;
+            color: white;
+        }
+
+        .stats-box {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .stat-card {
+            background: #E0E7FF;
+            padding: 16px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #4338CA;
+        }
+
+        .stat-label {
+            font-size: 0.78rem;
+            color: #5B21B6;
+            margin-top: 4px;
+        }
+
+        @media (max-width: 480px) {
+            .stats-box {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📝 Evaluasi Pembelajaran Anonim</h1>
+            <p>Suara Anda penting — sampaikan masukan dengan jujur dan membangun</p>
+        </header>
+
+        <div class="tabs">
+            <div class="tab active" onclick="switchTab('kirim')">✍️ Kirim Masukan</div>
+            <div class="tab" onclick="switchTab('lihat')">👁️ Lihat Hasil</div>
+        </div>
+
+        <!-- HALAMAN KIRIM MASUKAN -->
+        <div id="kirim-section" class="card">
+            <div class="info-box">
+                🔒 <strong>Sepenuhnya Anonim:</strong> Nama dan identitas Anda tidak akan tersimpan. Silakan sampaikan masukan dengan jujur!
+            </div>
+
+            <div class="form-group">
+                <label for="matkul">📘 Mata Kuliah</label>
+                <select id="matkul">
+                    <option value="">-- Pilih Mata Kuliah --</option>
+                    <option value="Pendidikan Kewarganegaraan">Pendidikan Kewarganegaraan</option>
+                    <option value="Bahasa Indonesia">Bahasa Indonesia</option>
+                    <option value="Matematika Dasar">Matematika Dasar</option>
+                    <option value="Pengantar Ilmu Komputer">Pengantar Ilmu Komputer</option>
+                    <option value="Logika & Algoritma">Logika & Algoritma</option>
+                    <option value="Sistem Basis Data">Sistem Basis Data</option>
+                    <option value="Jaringan Komputer">Jaringan Komputer</option>
+                    <option value="Pemrograman Web">Pemrograman Web</option>
+                    <option value="Lainnya">Lainnya</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="dosen">👨‍🏫 Nama Dosen</label>
+                <select id="dosen">
+                    <option value="">-- Pilih Nama Dosen --</option>
+                    <option value="Bapak Dr. Ahmad Zain, M.Kom">Bapak Dr. Ahmad Zain, M.Kom</option>
+                    <option value="Ibu Siti Aminah, M.Si">Ibu Siti Aminah, M.Si</option>
+                    <option value="Bapak Budi Santoso, M.T">Bapak Budi Santoso, M.T</option>
+                    <option value="Ibu Rina Puspita, Ph.D">Ibu Rina Puspita, Ph.D</option>
+                    <option value="Bapak Dedi Kurniawan, M.Cs">Bapak Dedi Kurniawan, M.Cs</option>
+                    <option value="Lainnya">Lainnya</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="kategori">📂 Jenis Masukan</label>
+                <select id="kategori">
+                    <option value="🌟 Apresiasi">🌟 Apresiasi — Hal-hal yang sudah berjalan baik</option>
+                    <option value="💡 Saran">💡 Saran — Usulan perbaikan</option>
+                    <option value="📝 Kritik">📝 Kritik — Hal yang perlu diperhatikan/diperbaiki</option>
+                    <option value="📊 Evaluasi Umum">📊 Evaluasi Umum — Penilaian keseluruhan</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="pesan">💬 Pesan Anda</label>
+                <textarea id="pesan" placeholder="Tuliskan masukan Anda dengan sopan, jujur, dan membangun. Semua pesan dikirim tanpa nama pengirim..."></textarea>
+            </div>
+
+            <button onclick="kirimMasukan()">✉️ Kirim Masukan Sekarang</button>
+            <div class="success-msg" id="berhasilPesan">
+                ✅ Terima kasih banyak! Masukan Anda berhasil dikirim secara anonim. Semoga membantu meningkatkan kualitas pembelajaran kita! 🙏
+            </div>
+        </div>
+
+        <!-- HALAMAN LIHAT HASIL -->
+        <div id="lihat-section" class="card hidden">
+            <h3 style="margin-bottom:8px; color:#1F2937;">📋 Hasil Evaluasi Pembelajaran</h3>
+            <p style="color:#6B7280; font-size:0.9rem; margin-bottom:24px;">Semua masukan dari mahasiswa — <strong>tanpa identitas pengirim</strong></p>
+
+            <div class="stats-box">
+                <div class="stat-card">
+                    <div class="stat-number" id="totalJumlah">0</div>
+                    <div class="stat-label">Total Masukan</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="apresiasiJumlah">0</div>
+                    <div class="stat-label">Apresiasi</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="kritikJumlah">0</div>
+                    <div class="stat-label">Kritik & Saran</div>
+                </div>
+            </div>
+
+            <div class="filter-bar">
+                <button class="filter-btn active" onclick="filterKategori('semua')">Semua</button>
+                <button class="filter-btn" onclick="filterKategori('🌟 Apresiasi')">Apresiasi</button>
+                <button class="filter-btn" onclick="filterKategori('💡 Saran')">Saran</button>
+                <button class="filter-btn" onclick="filterKategori('📝 Kritik')">Kritik</button>
+                <button class="filter-btn" onclick="filterKategori('📊 Evaluasi Umum')">Evaluasi</button>
+            </div>
+
+            <div id="daftarHasil"></div>
+        </div>
+    </div>
+
+    <script>
+        // Ganti Halaman
+        function switchTab(halaman) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            if (halaman === 'kirim') {
+                document.getElementById('kirim-section').classList.remove('hidden');
+                document.getElementById('lihat-section').classList.add('hidden');
+            } else {
+                document.getElementById('kirim-section').classList.add('hidden');
+                document.getElementById('lihat-section').classList.remove('hidden');
+                tampilkanHasil();
+            }
+        }
+
+        let kategoriTerpilih = 'semua';
+
+        // Kirim Masukan
+        function kirimMasukan() {
+            const matkul = document.getElementById('matkul').value;
+            const dosen = document.getElementById('dosen').value;
+            const kategori = document.getElementById('kategori').value;
+            const pesan = document.getElementById('pesan').value.trim();
+
+            if (!matkul || !dosen || !pesan) {
+                alert('⚠️ Harap lengkapi semua formulir ya!');
+                return;
+            }
+
+            // Ambil data lama dari penyimpanan
+            let semuaData = JSON.parse(localStorage.getItem('evaluasiAnonim') || '[]');
+            
+            // Tambah data baru — TANPA NAMA PENGIRIM!
+            semuaData.unshift({
+                id: Date.now(),
+                matkul: matkul,
+                dosen: dosen,
+                kategori: kategori,
+                pesan: pesan,
+                waktu: new Date().toLocaleString('id-ID', { dateStyle:'long', timeStyle:'short' })
+            });
+
+            // Simpan kembali
+            localStorage.setItem('evaluasiAnonim', JSON.stringify(semuaData));
+
+            // Tampilkan pesan berhasil
+            const berhasil = document.getElementById('berhasilPesan');
+            berhasil.style.display = 'block';
+
+            // Reset form
+            document.getElementById('mat
