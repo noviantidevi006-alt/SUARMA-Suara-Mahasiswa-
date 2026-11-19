@@ -199,13 +199,6 @@
             color: #9CA3AF;
         }
 
-        .empty-state svg {
-            width: 60px;
-            height: 60px;
-            margin-bottom: 16px;
-            opacity: 0.4;
-        }
-
         .filter-bar {
             display: flex;
             gap: 10px;
@@ -348,7 +341,7 @@
                     <div class="stat-label">Apresiasi</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-number" id="kritikJumlah">0</div>
+                    <div class="stat-number" id="kritikSaranJumlah">0</div>
                     <div class="stat-label">Kritik & Saran</div>
                 </div>
             </div>
@@ -366,6 +359,8 @@
     </div>
 
     <script>
+        let semuaDataGlobal = [];
+
         // Ganti Halaman
         function switchTab(halaman) {
             document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
@@ -396,10 +391,10 @@
             }
 
             // Ambil data lama dari penyimpanan
-            let semuaData = JSON.parse(localStorage.getItem('evaluasiAnonim') || '[]');
+            semuaDataGlobal = JSON.parse(localStorage.getItem('evaluasiAnonim') || '[]');
             
             // Tambah data baru — TANPA NAMA PENGIRIM!
-            semuaData.unshift({
+            semuaDataGlobal.unshift({
                 id: Date.now(),
                 matkul: matkul,
                 dosen: dosen,
@@ -409,24 +404,33 @@
             });
 
             // Simpan kembali
-            localStorage.setItem('evaluasiAnonim', JSON.stringify(semuaData));
+            localStorage.setItem('evaluasiAnonim', JSON.stringify(semuaDataGlobal));
 
             // Tampilkan pesan berhasil
-            const berhasil = document.getElementById('berhasilPesan');
-            berhasil.style.display = 'block';
+            document.getElementById('berhasilPesan').style.display = 'block';
 
             // Reset form
             document.getElementById('matkul').value = '';
-document.getElementById('dosen').value = '';
-document.getElementById('kategori').value = '';
-document.getElementById('pesan').value = '';
+            document.getElementById('dosen').value = '';
+            document.getElementById('kategori').value = '';
+            document.getElementById('pesan').value = '';
+
             setTimeout(function() {
-    document.getElementById('berhasilPesan').style.display = 'none';
-  }, 5000);
-}
+                document.getElementById('berhasilPesan').style.display = 'none';
+            }, 5000);
+        }
+
+        // Tampilkan Hasil
         function tampilkanHasil() {
-  let semuaData = JSON.parse(localStorage.getItem('evaluasiAnonim')) || [];
-  document.querySelector('.total-nilai').textContent = semuaData.length;
-}
-tampilkanHasil();
-</script>
+            semuaDataGlobal = JSON.parse(localStorage.getItem('evaluasiAnonim')) || [];
+            
+            // Hitung dan tampilkan angka
+            document.getElementById('totalJumlah').textContent = semuaDataGlobal.length;
+            
+            let apresiasiCount = semuaDataGlobal.filter(d => d.kategori.includes('Apresiasi')).length;
+            document.getElementById('apresiasiJumlah').textContent = apresiasiCount;
+            
+            let kritikSaranCount = semuaDataGlobal.filter(d => d.kategori.includes('Kritik') || d.kategori.includes('Saran')).length;
+            document.getElementById('kritikSaranJumlah').textContent = kritikSaranCount;
+            
+            filterKategori('semua
